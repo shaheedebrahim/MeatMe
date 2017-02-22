@@ -1,7 +1,9 @@
 package com.bandaids.meatme;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -35,5 +37,10 @@ public class AddPeopleActivity extends AppCompatActivity {
         accountNames.add("Wen Li");
         accountNames.add("Shaheed");
 
+    }
+
+    public void onFindTimes(View view) {
+        Intent intent = new Intent(this, MeetingTimesActivity.class);
+        startActivity(intent);
     }
 }

@@ -24,7 +24,8 @@
         </activity>
         <activity android:name=".GoogleAuthActivity" />
         <activity android:name=".CreateMeetingActivity" />
-        <activity android:name=".AddPeopleActivity"></activity>
+        <activity android:name=".AddPeopleActivity" />
+        <activity android:name=".MeetingTimesActivity"></activity>
     </application>
 
 </manifest>

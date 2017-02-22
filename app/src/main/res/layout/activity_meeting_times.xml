@@ -7,25 +7,12 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.bandaids.meatme.AddPeopleActivity">
+    tools:context="com.bandaids.meatme.MeetingTimesActivity">
 
     <ListView
-        android:id="@+id/accountList"
+        android:id="@+id/meetingTimesList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/findMeetingTimesButton"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
-
-    <Button
-        android:id="@+id/findMeetingTimesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:background="@color/colorAccent"
-        android:onClick="onFindTimes"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:text="Find Meeting Times" />
 </RelativeLayout>
