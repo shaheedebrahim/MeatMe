@@ -1,3 +1,4 @@
+package com.bandaids.meatme;
 class Event {
     DateTime start;
     DateTime finish;

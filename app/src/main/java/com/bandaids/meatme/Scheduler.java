@@ -1,4 +1,6 @@
-import java.util.*;
+package com.bandaids.meatme;
+
+import java.util.ArrayList;
 
 public class Scheduler {
 
