@@ -6,3 +6,8 @@
 .DS_Store
 /build
 /captures
+server/client_secret_*
+server/venv/
+server/*.pyc
+server/mysql-root-password
+server/__pycache__
