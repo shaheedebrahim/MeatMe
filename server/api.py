@@ -1,5 +1,6 @@
 # Flask imports
 from flask import Flask
+from flask_mysqldb import MySQL
 from flask_restful import reqparse, Resource, Api
 
 # Google API imports
@@ -7,15 +8,16 @@ from apiclient import discovery
 import httplib2
 from oauth2client import client
 
-# MySQL imports
-import MySQLdb
-
 # Other imports
-import datetime, uuid
+import datetime, logging, uuid
 
 app = Flask(__name__)
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = open('/home/bandaids/MeatMe/server/mysql-root-password').read().strip()
+app.config['MYSQL_DB'] = 'bandaids'
+
 api = Api(app)
-db = MySQLdb.connect(user='root', passwd=open('/home/bandaids/MeatMe/server/mysql-root-password').read().strip(), db='bandaids', autocommit=True)
+mysql = MySQL(app)
 
 # Set path to the Web application client_secret_*.json file you downloaded from the
 # Google API Console: https://console.developers.google.com/apis/credentials
@@ -27,6 +29,8 @@ class LoginGoogle(Resource):
         self.reqparse.add_argument('authCode', type=str, required=True, location='form')
     #def get(self):
         # Testing endpoint
+        #logging.info("Hello World Info")
+        #return {'response':'Hello World'}
         #flow = client.flow_from_clientsecrets(
         #        CLIENT_SECRET_FILE,
         #        scope=['https://www.googleapis.com/auth/calendar.readonly', 'profile', 'email'],
@@ -44,9 +48,10 @@ class LoginGoogle(Resource):
 
         # Exchange auth code for access token, refresh token, and ID token
         credentials = client.credentials_from_clientsecrets_and_code(
-            CLIENT_SECRET_FILE,
-            ['https://www.googleapis.com/auth/calendar.readonly', 'profile', 'email'],
-            args['authCode'])
+            filename=CLIENT_SECRET_FILE,
+            scope=['https://www.googleapis.com/auth/calendar', 'profile', 'email'],
+            code=args['authCode'],
+            redirect_uri='urn:ietf:wg:oauth:2.0:oob')
 
         # Get profile info
         http_auth = credentials.authorize(httplib2.Http())
@@ -61,8 +66,8 @@ class LoginGoogle(Resource):
         oauth2credentials = credentials.to_json()
 
         # Determine if user is already in the database
-        c = db.cursor()
-        c.execute("SELECT user_id FROM user_login WHERE user_login_site='google' AND user_login_id=%s", (userid,))
+        c = mysql.connection.cursor()
+        c.execute("SELECT user_id FROM user_login WHERE user_login_site='google' AND user_login_id=%s", (googleid,))
         user_login = c.fetchone()
         if user_login is None:
             # User does not exist, create new users
@@ -77,6 +82,7 @@ class LoginGoogle(Resource):
         # Create session
         session_id = str(uuid.uuid4())
         c.execute("INSERT INTO session (session_id, user_id) VALUES (%s, %s)", (session_id, user_id))
+        mysql.connection.commit()
 
         return {'session_id': session_id, 'user_id': user_id}
 
@@ -92,7 +98,7 @@ class NearbyUsers(Resource):
         lon = args['lon']
 
         # Look up session ID
-        c = db.cursor()
+        c = mysql.connection.cursor()
         c.execute("SELECT user_id FROM session WHERE session_id=%s", (args['session_id'],))
         session = c.fetchone()
         if session is None:
@@ -103,12 +109,13 @@ class NearbyUsers(Resource):
         c.execute("UPDATE user SET user_position_lat=%s, user_position_lon=%s, user_position_time=NOW() WHERE user_id=%s", (lat, lon, user_id))
 
         # Find near neighbors
-        c.execute("SELECT user_id, user_name, user_first_name, user_last_name, ( 6371 * acos( cos( radians(%s) ) * cos( radians(user_position_lat) ) * cos( radians(user_position_lon) - radians(%s) ) + sin( radians(%s) ) * sin(radians(user_position_lat)) ) ) AS distance FROM user HAVING distance < 0.01 LIMIT 20", (lat, lon, lat))
+        c.execute("SELECT user_id, user_name, user_first_name, user_last_name, ( 6371 * acos( cos( radians(%s) ) * cos( radians(user_position_lat) ) * cos( radians(user_position_lon) - radians(%s) ) + sin( radians(%s) ) * sin(radians(user_position_lat)) ) ) AS distance FROM user WHERE user_position_time > (NOW() - INTERVAL 30 SECOND) HAVING distance < 0.01 LIMIT 20", (lat, lon, lat))
         result = []
         while True:
             row = c.fetchone()
             if row is None: break
             result.append({"user_id":row[0], "user_name":row[1], "user_first_name":row[2], "user_last_name":row[3], "distance": row[4]})
+        mysql.connection.commit()
         return {'users': result}
 
 class UsersFreeBusy(Resource):
@@ -126,7 +133,7 @@ class UsersFreeBusy(Resource):
         max_time = datetime.datetime.utcfromtimestamp(args['max_time']).isoformat() + 'Z'
 
         # Look up session ID
-        c = db.cursor()
+        c = mysql.connection.cursor()
         c.execute("SELECT user_id FROM session WHERE session_id=%s", (args['session_id'],))
         session = c.fetchone()
         if session is None:
@@ -140,11 +147,15 @@ class UsersFreeBusy(Resource):
             user = c.fetchone()
             if user is None:
                 raise RuntimeError("Invalid user")
-            credentials = client.OAuth2Credentials.from_json(user[0])
-            http_auth = credentials.authorize(httplib2.Http())
-            service = discovery.build('calendar', 'v3', http=http_auth)
-            result = service.freebusy().query(body={'timeMin':min_time, 'timeMax':max_time, 'items':[{"id":"primary"}]}).execute()
-            busy = result.get('calendars', {}).get('primary', {}).get('busy', [])
+            try:
+                credentials = client.OAuth2Credentials.from_json(user[0])
+                http_auth = credentials.authorize(httplib2.Http())
+                service = discovery.build('calendar', 'v3', http=http_auth)
+                result = service.freebusy().query(body={'timeMin':min_time, 'timeMax':max_time, 'items':[{"id":"primary"}]}).execute()
+                busy = result.get('calendars', {}).get('primary', {}).get('busy', [])
+            except client.Error as e:
+                logging.warning('OAuth client error on user %s: %s' % (user_id, e))
+                continue
             range_result = []
             for time_range in busy:
                 start_time = datetime.datetime.strptime(time_range['start'], "%Y-%m-%dT%H:%M:%SZ")
