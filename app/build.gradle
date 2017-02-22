@@ -28,6 +28,7 @@ dependencies {
     compile 'com.android.support:design:24.1.1'
     compile 'com.google.firebase:firebase-core:10.2.0'
     compile 'com.google.android.gms:play-services-auth:10.2.0'
+    compile 'joda-time:joda-time:2.9.4'
     compile files('libs/org.apache.http.legacy.jar')
     compile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
 }

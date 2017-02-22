@@ -73,7 +73,6 @@ public class AddPeopleActivity extends AppCompatActivity {
         if (people == null) {
             Snackbar.make(findViewById(android.R.id.content), "Please select at least one person", Snackbar.LENGTH_LONG).show();
         } else {
-
             Intent intent = new Intent(this, MeetingTimesActivity.class);
             startActivity(intent);
         }
