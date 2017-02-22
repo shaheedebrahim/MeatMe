@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 public class AddPeopleMethodFragment extends DialogFragment {
 
     RadioButton locationButton;
+    Bundle bundle;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -35,6 +36,8 @@ public class AddPeopleMethodFragment extends DialogFragment {
                     }
                 });
 
+        bundle = this.getArguments();
+
 
         return builder.create();
     }
@@ -52,6 +55,8 @@ public class AddPeopleMethodFragment extends DialogFragment {
             public void onClick(View v) {
                 if (locationButton.isChecked()) {
                     Intent intent = new Intent(getActivity(), AddPeopleActivity.class);
+                    intent.putExtra("fromDate", bundle.getIntArray("fromDate"));
+                    intent.putExtra("toDate", bundle.getIntArray("toDate"));
                     startActivity(intent);
                 }
             }

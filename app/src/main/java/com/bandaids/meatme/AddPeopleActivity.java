@@ -2,7 +2,9 @@ package com.bandaids.meatme;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -13,6 +15,9 @@ public class AddPeopleActivity extends AppCompatActivity {
 
     ListView accountList;
     ArrayList<String> accountNames;
+
+    int[] fromDate;
+    int[] toDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +34,11 @@ public class AddPeopleActivity extends AppCompatActivity {
 
         accountList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         accountList.setItemsCanFocus(false);
+
+        Intent intent = getIntent();
+        fromDate = intent.getIntArrayExtra("fromDate");
+        toDate = intent.getIntArrayExtra("toDate");
+
     }
 
     public void setAccountNames() {
@@ -39,8 +49,33 @@ public class AddPeopleActivity extends AppCompatActivity {
 
     }
 
+    public ArrayList<String> getSelectedPeople() {
+        ArrayList<String> people = new ArrayList<>();
+
+        SparseBooleanArray checked = accountList.getCheckedItemPositions();
+
+        for (int i = 0; i < accountList.getAdapter().getCount(); i++) {
+            if (checked.get(i)) {
+                people.add((String) accountList.getItemAtPosition(i));
+            }
+        }
+
+        if (people.size() == 0) {
+            return null;
+        } else {
+            return people;
+        }
+    }
+
     public void onFindTimes(View view) {
-        Intent intent = new Intent(this, MeetingTimesActivity.class);
-        startActivity(intent);
+        ArrayList<String> people = getSelectedPeople();
+
+        if (people == null) {
+            Snackbar.make(findViewById(android.R.id.content), "Please select at least one person", Snackbar.LENGTH_LONG).show();
+        } else {
+
+            Intent intent = new Intent(this, MeetingTimesActivity.class);
+            startActivity(intent);
+        }
     }
 }

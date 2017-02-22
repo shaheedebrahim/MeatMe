@@ -22,7 +22,7 @@ public class MeetingTimesActivity extends AppCompatActivity {
 
         meetingTimesList = (ListView) findViewById(R.id.meetingTimesList);
 
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, meetingTimes);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, meetingTimes);
         meetingTimesList.setAdapter(adapter);
 
         meetingTimesList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
