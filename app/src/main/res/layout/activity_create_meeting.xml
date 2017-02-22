@@ -17,7 +17,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:hint="Hangout Name" />
+        android:hint="Hangout Name"
+        android:textSize="40dp" />
 
     <Button
         android:id="@+id/addPeopleButton"
