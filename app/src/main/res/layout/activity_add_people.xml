@@ -28,4 +28,15 @@
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:text="Find Meeting Times" />
+
+    <Button
+        android:id="@+id/saveGroupButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorAccent"
+        android:onClick="onSaveGroup"
+        android:text="Save Group" />
+
 </RelativeLayout>

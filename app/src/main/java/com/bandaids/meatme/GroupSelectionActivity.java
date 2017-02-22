@@ -46,8 +46,6 @@ public class GroupSelectionActivity extends AppCompatActivity {
     }
 
     private void setupGroups() {
-        groups.add("GOD KING KENDRA");
-        groups.add("Leonnitis?");
-        groups.add("Wen Li");
+        groups = (ArrayList<String>) Database.database.getAllGroups().clone();
     }
 }

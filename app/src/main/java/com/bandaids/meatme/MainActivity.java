@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         setupDrawer();
         addDrawerItems();
+
+        Database.database = new SQLiteDBHelper(this);
     }
 
     private void setupDrawer() {

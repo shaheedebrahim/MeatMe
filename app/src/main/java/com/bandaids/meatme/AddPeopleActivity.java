@@ -77,4 +77,8 @@ public class AddPeopleActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
+    public void onSaveGroup(View view) {
+
+    }
 }
