@@ -7,5 +7,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_test">test</string>
     <string name="server_client_id">706715075615-tgl40g50i13uf9enegi3i13pmp2c7ic0.apps.googleusercontent.com</string>
-    <string name="server_url">https://bandaids.northcentralus.cloudapp.azure.com/login_google</string>
+    <string name="server_url_login">http://bandaids.northcentralus.cloudapp.azure.com/login_google</string>
+    <string name="server_url_find">http://bandaids.northcentralus.cloudapp.azure.com/nearby_users</string>
+    <string name="server_url_query">http://bandaids.northcentralus.cloudapp.azure.com/users_free_busy</string>
 </resources>

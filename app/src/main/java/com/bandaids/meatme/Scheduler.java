@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class Scheduler {
 
-    public static org.joda.time.DateTime StartDayTime = new org.joda.time.DateTime(0, 0, 0, 7, 0);
-    public static org.joda.time.DateTime EndDayTime = new org.joda.time.DateTime(0, 0, 0, 23, 0);
+    public static int StartDayTime = 420;
+    public static int EndDayTime = 1380;
 
     public static ArrayList<Event> schedule(ArrayList<Event> busy, int durationInMinutes, Event timeSpan) {
         ArrayList<Event> possibilities = new ArrayList<Event>();
@@ -28,10 +28,10 @@ public class Scheduler {
     }
 
     private static boolean timeRangeCheck(Event e, int duration) {
-        if (duration < (EndDayTime.minuteOfDay().get() - StartDayTime.minuteOfDay().get())) { //Will the meeting fit in time span set
+        if (duration < (EndDayTime - StartDayTime)) { //Will the meeting fit in time span set
             if ((e.start.toLocalDate().isEqual(e.finish.toLocalDate())) && //On same day
-                    (StartDayTime.minuteOfDay().get() <= e.start.minuteOfDay().get()) && //Starts after start of day
-                    (EndDayTime.minuteOfDay().get() >= e.finish.minuteOfDay().get())) { //Ends before end of day
+                    (StartDayTime <= e.start.minuteOfDay().get()) && //Starts after start of day
+                    (EndDayTime >= e.finish.minuteOfDay().get())) { //Ends before end of day
                 return true;
             } else {
                 return false;

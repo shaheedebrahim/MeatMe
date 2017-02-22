@@ -18,97 +18,33 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class SendTask extends AsyncTask<BasicNameValuePair, Void, HttpResponse> {
-    //HttpURLConnection connection;
     String urlName;
+    String type;
 
-    public SendTask(String url) {
+    /* Parameter t can take one of three values:
+        - "login" - to support a login request
+        - "find" - to support find by location
+        - "query" - to query calendar of selected user set
+     */
+    public SendTask(String url, String t) {
+        type = t;
         urlName = url;
     }
 
-        /*final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
-
-        private static void trustAllHosts() {
-            // Create a trust manager that does not validate certificate chains
-            TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return new java.security.cert.X509Certificate[] {};
-                }
-
-                public void checkClientTrusted(X509Certificate[] chain,
-                                               String authType) throws CertificateException {
-                }
-
-                public void checkServerTrusted(X509Certificate[] chain,
-                                               String authType) throws CertificateException {
-                }
-            } };
-
-            // Install the all-trusting trust manager
-            try {
-                SSLContext sc = SSLContext.getInstance("TLS");
-                sc.init(null, trustAllCerts, new java.security.SecureRandom());
-                HttpsURLConnection
-                        .setDefaultSSLSocketFactory(sc.getSocketFactory());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }*/
-
     public HttpResponse doInBackground(BasicNameValuePair... mess) {
-            /*for (int i = 0; i < mess.length; i++) {
-                try {
-                    //Create connection
-                    URL url = new URL(urlName);
-                    if (url.getProtocol().toLowerCase().equals("https")) {
-                        trustAllHosts();
-                        Log.d("TEST: ", "HTTPS PROTOCOL USED");
-                        HttpsURLConnection https = (HttpsURLConnection) url.openConnection();
-                        https.setHostnameVerifier(DO_NOT_VERIFY);
-                        connection = https;
-                    } else {
-                        connection = (HttpURLConnection) url.openConnection();
-                    }
-
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("POST");
-                    connection.setRequestProperty(mess[i].left, mess[i].right);
-
-                    connection.setUseCaches(false);
-                    connection.setDoOutput(true);
-
-                    //Send request
-                    DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-                    wr.writeBytes(urlName);
-                    wr.close();
-
-                    //Get Response
-                    InputStream is = connection.getInputStream();
-                    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                    StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
-                    String line;
-                    while ((line = rd.readLine()) != null) {
-                        response.append(line);
-                        response.append('\r');
-                    }
-                    rd.close();
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }*/
         try {
             SSLContextBuilder builder = new SSLContextBuilder();
             builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
@@ -143,7 +79,41 @@ public class SendTask extends AsyncTask<BasicNameValuePair, Void, HttpResponse> 
         try {
             String resp = EntityUtils.toString(v.getEntity());
             JSONObject dict = new JSONObject(resp);
+            if (type.equals("login")) {
+                Log.d("TEST: ", dict.toString());
+                if (!(dict.isNull("session_id") || dict.isNull("user_id"))) {
+                    MainActivity.user_id = dict.getInt("user_id");
+                    MainActivity.session_id = dict.getString("session_id");
+                }
+            }
+            else if (type.equals("query")) {
+                Log.d("TESTERONI: ", dict.toString());
+                ArrayList<Event> busy = new ArrayList<>();
+                Iterator<?> keys = dict.keys();
 
+                while( keys.hasNext() ) {
+                    String key = (String)keys.next();
+                    if (dict.get(key) instanceof JSONArray) {
+                        JSONArray times = dict.getJSONArray(key);
+                        for (int i = 0; i < times.length(); i++) {
+                            JSONObject time = times.getJSONObject(i);
+                            DateTime start = new DateTime(time.getLong("start_time") * 1000, DateTimeZone.UTC);
+                            DateTime end = new DateTime(time.getLong("end_time") * 1000, DateTimeZone.UTC);
+                            busy.add(new Event(start, end));
+                        }
+                    }
+                }
+
+                Collections.sort(busy);
+
+                Log.d("BUSY LIST: ", busy.toString());
+
+                DateTime from = new DateTime(AddPeopleActivity.fromDate[2], AddPeopleActivity.fromDate[1], AddPeopleActivity.fromDate[0], 0, 0);
+                DateTime to = new DateTime(AddPeopleActivity.toDate[2], AddPeopleActivity.toDate[1], AddPeopleActivity.toDate[0], 0, 0);
+                ArrayList<Event> poss = Scheduler.schedule(busy, 60, new Event(from, to));
+
+                Log.d("POSS LIST: ", poss.toString());
+            }
         }
         catch (IOException e) {
             e.printStackTrace();

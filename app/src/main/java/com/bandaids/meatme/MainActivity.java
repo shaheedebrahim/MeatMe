@@ -7,6 +7,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class MainActivity extends AppCompatActivity {
+    public static int user_id = -1;
+    public static String session_id = "";
 
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
@@ -27,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (SavedAuthInfo.getUName(this).length() == 0) {
+            Intent intent = new Intent(this, GoogleAuthActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Log.d("TESTSETSETSET: ", "Saved info");
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

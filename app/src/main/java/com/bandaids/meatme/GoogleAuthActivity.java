@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -61,6 +62,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -82,7 +85,9 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
         String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
-                .requestServerAuthCode(serverClientId, false)
+                .requestEmail()
+                .requestProfile()
+                .requestServerAuthCode(serverClientId, true)
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -118,7 +123,23 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             String authCode = acct.getServerAuthCode();
-            new SendTask(getString(R.string.server_url)).execute((new BasicNameValuePair("authCode", authCode)));
+            SendTask task = new SendTask(getString(R.string.server_url_login), "login");
+            task.execute(new BasicNameValuePair("authCode", authCode));
+
+            try {
+                task.get(5000, TimeUnit.MILLISECONDS);
+
+                //while (MainActivity.session_id.equals(""));
+
+                finish();
+            }
+            catch (TimeoutException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             // Signed out, show unauthenticated UI.
         }
