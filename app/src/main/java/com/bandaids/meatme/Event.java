@@ -1,5 +1,8 @@
 package com.bandaids.meatme;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 public class Event implements Comparable<Event> {
     org.joda.time.DateTime start;
     org.joda.time.DateTime finish;
@@ -20,6 +23,7 @@ public class Event implements Comparable<Event> {
     }
 
     public String toString() {
-        return "From " + start.toString() + " " + "to " + finish.toString();
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM HH:mm");
+        return "From " + dtf.parseDateTime(start.toString()) + "to " + dtf.parseDateTime(finish.toString());
     }
 }

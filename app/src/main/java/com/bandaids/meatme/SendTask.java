@@ -119,7 +119,7 @@ public class SendTask extends AsyncTask<BasicNameValuePair, Void, HttpResponse> 
                 for (int i = 0; i < poss.size(); i++) sPoss.add(poss.get(i).toString());
                 MeetingTimesActivity.meetingTimes = new ArrayList<>();
                 MeetingTimesActivity.meetingTimes = sPoss;
-                Log.d("POSS LIST: ", poss.toString());
+                Log.d("POSS LIST: ", sPoss.toString());
             }
             else if (type == "find") {
                 Log.d("RESPONSE: ", resp);
