@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "706715075615",
+    "project_id": "firebase-meatme"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706715075615:android:95d4db8c4e47fc66",
+        "android_client_info": {
+          "package_name": "com.bandaids.meatme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "706715075615-j3da0b4ju7smc8mdueso5r6i34v7khal.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bandaids.meatme",
+            "certificate_hash": "1997b3cde45c55b41ce8e54d5e8d2cfac6eb6164"
+          }
+        },
+        {
+          "client_id": "706715075615-fh5greadcada16lqo5th9dchea34fgbp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0LbKmD7kilMJ6WawtZBAcAot-Vczzcuw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

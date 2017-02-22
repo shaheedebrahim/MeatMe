@@ -1,5 +1,6 @@
 package com.bandaids.meatme;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -65,10 +66,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(this, v);
+        /**PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
         inflater.inflate(R.menu.menu_selections, popup.getMenu());
-        popup.show();
+        popup.show();**/
+
+        Intent intent = new Intent(this, GoogleAuthActivity.class);
+        startActivity(intent);
     }
 
     @Override
