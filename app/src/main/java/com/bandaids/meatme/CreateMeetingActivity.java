@@ -13,7 +13,8 @@ public class CreateMeetingActivity extends AppCompatActivity {
     }
 
     public void onSelectAddPeople(View v) {
-
+        AddPeopleMethodFragment addPeopleMethodFragment = new AddPeopleMethodFragment();
+        addPeopleMethodFragment.show(getSupportFragmentManager(), "tag");
     }
 
     public void onSelectFromDate(View v) {
