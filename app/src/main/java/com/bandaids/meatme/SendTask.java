@@ -115,7 +115,10 @@ public class SendTask extends AsyncTask<BasicNameValuePair, Void, HttpResponse> 
                 DateTime from = new DateTime(AddPeopleActivity.fromDate[2], AddPeopleActivity.fromDate[1], AddPeopleActivity.fromDate[0], 0, 0);
                 DateTime to = new DateTime(AddPeopleActivity.toDate[2], AddPeopleActivity.toDate[1], AddPeopleActivity.toDate[0], 0, 0);
                 ArrayList<Event> poss = Scheduler.schedule(busy, 60, new Event(from, to));
-
+                ArrayList<String> sPoss = new ArrayList<>();
+                for (int i = 0; i < poss.size(); i++) sPoss.add(poss.get(i).toString());
+                MeetingTimesActivity.meetingTimes = new ArrayList<>();
+                MeetingTimesActivity.meetingTimes = sPoss;
                 Log.d("POSS LIST: ", poss.toString());
             }
             else if (type == "find") {

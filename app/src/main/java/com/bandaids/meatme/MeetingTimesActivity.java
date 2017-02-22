@@ -10,15 +10,14 @@ import java.util.ArrayList;
 public class MeetingTimesActivity extends AppCompatActivity {
 
     ListView meetingTimesList;
-    ArrayList<String> meetingTimes;
+    static ArrayList<String> meetingTimes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting_times);
 
-        meetingTimes = new ArrayList<>();
-        setupMeetingTimes();
+        //setupMeetingTimes();
 
         meetingTimesList = (ListView) findViewById(R.id.meetingTimesList);
 

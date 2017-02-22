@@ -14,17 +14,31 @@ public class Scheduler {
         org.joda.time.DateTime current = timeSpan.start;
         double opening;
         for( Event e : busy ) {
-            if (e.start.isAfter(current.plus(Period.minutes(durationInMinutes)))) {
-                possibilities.add(new Event(current, e.start));
-            }
+            addPossibilities(new Event(current, e.start), durationInMinutes, possibilities);
             if (e.finish.isAfter(current)) {
                 current = e.finish;
             }
         }
-        if (timeSpan.finish.isAfter(current.plus(Period.minutes(durationInMinutes)))) {
-            possibilities.add(new Event(current, timeSpan.finish));
-        }
+        addPossibilities(new Event(current, timeSpan.finish), durationInMinutes, possibilities);
         return possibilities;
+    }
+
+    private static void addPossibilities(Event openTime, int duration, ArrayList<Event> possibilities) {
+        Event next;
+        while(openTime.finish.isAfter(openTime.start.plus(Period.minutes(duration)))) {
+            next = new Event(openTime.start, openTime.start.plus(Period.minutes(duration)));
+            if (timeRangeCheck(next, duration)) {
+                possibilities.add(next);
+            }
+            if ((0 < openTime.start.getMinuteOfHour()) && (openTime.start.getMinuteOfHour() < 30)) {
+                openTime.start = openTime.start.minuteOfHour().setCopy(30);
+            } else if ((30 < openTime.start.getMinuteOfHour()) && (openTime.start.getMinuteOfHour() <= 59)) {
+                openTime.start = openTime.start.minuteOfHour().setCopy(0);
+                openTime.start = openTime.start.plusHours(1);
+            } else {
+                openTime.start = openTime.start.plus(Period.minutes(30));
+            }
+        }
     }
 
     private static boolean timeRangeCheck(Event e, int duration) {
