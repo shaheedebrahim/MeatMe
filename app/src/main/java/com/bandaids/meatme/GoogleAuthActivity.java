@@ -1,5 +1,6 @@
 package com.bandaids.meatme;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -76,6 +77,8 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
     final int RC_SIGN_IN = 1551;
 
     private GoogleApiClient mGoogleApiClient;
+
+    public static Context mainContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

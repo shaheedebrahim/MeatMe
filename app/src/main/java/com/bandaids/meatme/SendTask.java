@@ -2,6 +2,7 @@ package com.bandaids.meatme;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -27,12 +28,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 public class SendTask extends AsyncTask<BasicNameValuePair, Void, HttpResponse> {
     String urlName;
     String type;
+    ArrayAdapter adapter;
 
     /* Parameter t can take one of three values:
         - "login" - to support a login request
@@ -84,6 +87,7 @@ public class SendTask extends AsyncTask<BasicNameValuePair, Void, HttpResponse> 
                 if (!(dict.isNull("session_id") || dict.isNull("user_id"))) {
                     MainActivity.user_id = dict.getInt("user_id");
                     MainActivity.session_id = dict.getString("session_id");
+                    SavedAuthInfo.setUName(GoogleAuthActivity.mainContext, MainActivity.session_id);
                 }
             }
             else if (type.equals("query")) {
@@ -113,6 +117,19 @@ public class SendTask extends AsyncTask<BasicNameValuePair, Void, HttpResponse> 
                 ArrayList<Event> poss = Scheduler.schedule(busy, 60, new Event(from, to));
 
                 Log.d("POSS LIST: ", poss.toString());
+            }
+            else if (type == "find") {
+                Log.d("RESPONSE: ", resp);
+                JSONArray people = dict.getJSONArray("users");
+                AddPeopleActivity.accountNames.clear();
+                AddPeopleActivity.idMap = new HashMap<>();
+                for (int i = 0; i < people.length(); i++) {
+                    JSONObject person = people.getJSONObject(i);
+                    String name = person.getString("user_name");
+                    AddPeopleActivity.accountNames.add(name);
+                    AddPeopleActivity.idMap.put(name, String.valueOf(person.getInt("user_id")));
+                    adapter.notifyDataSetChanged();
+                }
             }
         }
         catch (IOException e) {

@@ -1,8 +1,11 @@
 package com.bandaids.meatme;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.Manifest;
 
 public class MainActivity extends AppCompatActivity {
     public static int user_id = -1;
@@ -30,11 +34,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    0);
+        }
+
         if (SavedAuthInfo.getUName(this).length() == 0) {
+            GoogleAuthActivity.mainContext = this;
             Intent intent = new Intent(this, GoogleAuthActivity.class);
             startActivity(intent);
         }
         else {
+            session_id = SavedAuthInfo.getUName(this);
             Log.d("TESTSETSETSET: ", "Saved info");
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

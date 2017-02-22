@@ -1,7 +1,10 @@
 package com.bandaids.meatme;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,7 +13,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
@@ -21,12 +26,13 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class AddPeopleActivity extends AppCompatActivity {
+public class AddPeopleActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    ArrayAdapter adapter;
     GoogleApiClient mGoogleApiClient;
     ListView accountList;
-    ArrayList<String> accountNames;
-    HashMap<String, String> idMap;
+    static ArrayList<String> accountNames;
+    static HashMap<String, String> idMap;
 
     static int[] fromDate;
     static int[] toDate;
@@ -40,18 +46,16 @@ public class AddPeopleActivity extends AppCompatActivity {
 
         accountList = (ListView) findViewById(R.id.accountList);
 
-        /*if (mGoogleApiClient == null) {
+        if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-        }*/
+        }
 
         accountNames = new ArrayList<String>();
-        requestAccounts();
-
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, accountNames);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice, accountNames);
         accountList.setAdapter(adapter);
 
         accountList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -64,12 +68,18 @@ public class AddPeopleActivity extends AppCompatActivity {
         Log.d("FROM DATE: ", Arrays.toString(toDate));
     }
 
-    public void requestAccounts() {
-        accountNames.add("Wenli Looi");
-        accountNames.add("Sean");
+    private void display() {
 
-        idMap.put("Wenli Looi", "1");
-        idMap.put("Sean", "2");
+    }
+
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     public ArrayList<String> getSelectedPeople() {
@@ -123,7 +133,7 @@ public class AddPeopleActivity extends AppCompatActivity {
 
                 //while (MainActivity.session_id.equals(""));
 
-                finish();
+                //finish();
             }
             catch (TimeoutException e) {
                 e.printStackTrace();
@@ -138,7 +148,36 @@ public class AddPeopleActivity extends AppCompatActivity {
         }
     }
 
-    public void onSaveGroup(View view) {
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        try {
+            Location LastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                    mGoogleApiClient);
+            if (LastLocation != null) {
+                Log.d("Location update: ", "Updated current location");
+
+                BasicNameValuePair[] pairs = new BasicNameValuePair[3];
+                pairs[0] = new BasicNameValuePair("session_id", MainActivity.session_id);
+                pairs[1] = new BasicNameValuePair("lat", String.valueOf(LastLocation.getLatitude()));
+                pairs[2] = new BasicNameValuePair("lon", String.valueOf(LastLocation.getLongitude()));
+
+                SendTask task = new SendTask(getString(R.string.server_url_find), "find");
+                task.adapter = adapter;
+                task.execute(pairs);
+            }
+        }
+        catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 }
