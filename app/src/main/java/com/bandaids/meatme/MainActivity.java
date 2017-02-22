@@ -6,10 +6,8 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -66,13 +64,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showPopup(View v) {
-        /**PopupMenu popup = new PopupMenu(this, v);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.menu_selections, popup.getMenu());
-        popup.show();**/
-
-        Intent intent = new Intent(this, GoogleAuthActivity.class);
+        Intent intent = new Intent(this, CreateMeetingActivity.class);
         startActivity(intent);
+
+        //Intent intent = new Intent(this, GoogleAuthActivity.class);
+        //startActivity(intent);
     }
 
     @Override
