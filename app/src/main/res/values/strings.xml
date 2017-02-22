@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">MeatMe</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_main_navigation">MainNavigationActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_test">test</string>
+    <string name="server_client_id">706715075615-tgl40g50i13uf9enegi3i13pmp2c7ic0.apps.googleusercontent.com</string>
 </resources>
