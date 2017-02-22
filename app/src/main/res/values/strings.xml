@@ -7,7 +7,5 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_test">test</string>
     <string name="server_client_id">706715075615-tgl40g50i13uf9enegi3i13pmp2c7ic0.apps.googleusercontent.com</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="server_url">https://bandaids.northcentralus.cloudapp.azure.com/login_google</string>
 </resources>
