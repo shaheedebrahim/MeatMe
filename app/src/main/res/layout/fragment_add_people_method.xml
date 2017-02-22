@@ -5,10 +5,11 @@
     android:orientation="vertical"
     tools:context=".AddPeopleMethodFragment">
 
-    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    <RadioGroup
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="20dp">
 
         <RadioButton
             android:id="@+id/selectFromLocationButton"

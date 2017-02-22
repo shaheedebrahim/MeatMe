@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 public class AddPeopleMethodFragment extends DialogFragment {
 
     RadioButton locationButton;
+    RadioButton groupButton;
     Bundle bundle;
 
     @Override
@@ -48,6 +49,8 @@ public class AddPeopleMethodFragment extends DialogFragment {
         AlertDialog d = (AlertDialog) getDialog();
 
         locationButton = (RadioButton) d.findViewById(R.id.selectFromLocationButton);
+        groupButton = (RadioButton) d.findViewById(R.id.selectFromGroupButton);
+
 
         Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
         positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +58,11 @@ public class AddPeopleMethodFragment extends DialogFragment {
             public void onClick(View v) {
                 if (locationButton.isChecked()) {
                     Intent intent = new Intent(getActivity(), AddPeopleActivity.class);
+                    intent.putExtra("fromDate", bundle.getIntArray("fromDate"));
+                    intent.putExtra("toDate", bundle.getIntArray("toDate"));
+                    startActivity(intent);
+                } else if (groupButton.isChecked()) {
+                    Intent intent = new Intent(getActivity(), GroupSelectionActivity.class);
                     intent.putExtra("fromDate", bundle.getIntArray("fromDate"));
                     intent.putExtra("toDate", bundle.getIntArray("toDate"));
                     startActivity(intent);
