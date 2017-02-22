@@ -25,7 +25,8 @@
         <activity android:name=".GoogleAuthActivity" />
         <activity android:name=".CreateMeetingActivity" />
         <activity android:name=".AddPeopleActivity" />
-        <activity android:name=".MeetingTimesActivity"></activity>
+        <activity android:name=".MeetingTimesActivity" />
+        <activity android:name=".GroupSelectionActivity"></activity>
     </application>
 
 </manifest>
